@@ -35,7 +35,7 @@ class MM2Web extends MM2 implements MM2WithInit {
   Future<void> start(String? passphrase) async {
     final Map<String, dynamic> params = await MM2.generateStartParams(
       passphrase: passphrase,
-      gui: 'web_dex web',
+      gui: 'web_dex CE',
       dbDir: null,
       userHome: null,
     );
