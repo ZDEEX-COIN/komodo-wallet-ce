@@ -19,13 +19,13 @@
     },
     "coins": {
         "update_commit_on_build": true,
-        "bundled_coins_repo_commit": "8a37a6cdb8f4f334f305899006b31415e3a49bf1",
-        "coins_repo_api_url": "https://api.github.com/repos/KomodoPlatform/coins",
-        "coins_repo_content_url": "https://raw.githubusercontent.com/KomodoPlatform/coins",
+        "bundled_coins_repo_commit": "daec2cd67b588936b1dc331ec9049ee15dc60dd4",
+        "coins_repo_api_url": "https://api.github.com/repos/komodoce/coins-ce",
+        "coins_repo_content_url": "https://raw.githubusercontent.com/komodoce/coins-ce",
         "coins_repo_branch": "master",
         "runtime_updates_enabled": true,
         "mapped_files": {
-            "assets/config/coins_config.json": "utils/coins_config_unfiltered.json",
+            "assets/config/coins_config.json": "utils/coins_config_wss.json",
             "assets/config/coins.json": "coins"
         },
         "mapped_folders": {
