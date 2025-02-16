@@ -1,0 +1,113 @@
+name: Create Release and Upload Build Artifacts
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Shortify commit sha
+        shell: bash
+        run: echo "sha_short=$(echo ${GITHUB_SHA::7})" >> $GITHUB_OUTPUT
+        id: shortify_commit
+
+      - name: Get branch
+        shell: bash
+        run: echo "ref_short=$(echo ${GITHUB_REF##*/})" >> $GITHUB_OUTPUT
+        id: get_branch
+
+      - name: Setup GH Actions
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Get stable flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.x'
+          channel: 'stable'
+
+      - name: Prepare build directory
+        run: |
+          flutter clean
+          rm -rf build/*
+          rm -rf web/src/mm2/*
+          rm -rf web/src/kdfi/*
+          rm -rf web/dist/*
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fetch packages and generate assets
+        run: |
+          echo "Running \`flutter build\` to generate assets for the deployment build"
+          flutter pub get > /dev/null 2>&1
+          flutter build web --release > /dev/null 2>&1 || true
+          flutter pub get > /dev/null 2>&1
+          echo "Done fetching packages and generating assets"
+
+      - name: Build Zdeex Wallet web
+        run: |
+          flutter doctor -v
+          flutter build web --csp --profile --no-web-resources-cdn
+
+      - name: Validate build
+        run: |
+          if [ ! -f build/web/dist/*.wasm ]; then
+            echo "Error: Web build failed. No wasm file found in build/web/dist/"
+            exit 1 
+          fi
+          if ! cmp -s web/index.html build/web/index.html; then
+            echo "Error: Web build failed. index.html is not equal to the source index.html"
+            exit 1
+          fi
+          if git diff --exit-code web/index.html; then
+            echo "Error: Web build failed. index.html has no uncommitted changes"
+            exit 1
+          fi
+          if [ ! -f build/web/assets/AssetManifest.bin ]; then
+            echo "Error: AssetManifest.bin file not found."
+            exit 1
+          fi
+          if ! strings build/web/assets/AssetManifest.bin | grep -q "assets/coin_icons/png/kmd.png"; then
+            echo "Error: Coin icon not found in AssetManifest.bin"
+            exit 1
+          fi
+
+      - name: Archive build artifacts
+        run: |
+          zip -r build-web.zip build/web/
+
+      - name: Upload build as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build
+          path: build-web.zip
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: build-web.zip
+          asset_name: build-web.zip
+          asset_content_type: application/zip
