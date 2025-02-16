@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 const coinImagesFolder = 'coin_icons/png/';
-const mediaCdnUrl = 'https://komodoce.github.io/coins-ce/icons/';
+const mediaCdnUrl = 'https://zdeex.github.io/coins-ce/icons/';
 
 final Map<String, bool> _assetExistenceCache = {};
 final Map<String, bool> _cdnExistenceCache = {};
