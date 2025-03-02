@@ -11,9 +11,9 @@ class CoinConfigProvider {
   CoinConfigProvider({
     this.branch = 'master',
     this.coinsGithubContentUrl =
-        'https://raw.githubusercontent.com/KomodoPlatform/coins',
+        'https://raw.githubusercontent.com/ZDEEX/coins-ce',
     this.coinsGithubApiUrl =
-        'https://api.github.com/repos/KomodoPlatform/coins',
+        'https://api.github.com/repos/ZDEEX/coins-ce',
     this.coinsPath = 'coins',
     this.coinsConfigPath = 'utils/coins_config_unfiltered.json',
   });
