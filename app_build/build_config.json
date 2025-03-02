@@ -19,7 +19,7 @@
     },
     "coins": {
         "update_commit_on_build": true,
-        "bundled_coins_repo_commit": "0e25c0fb84c997edc8d108d84ea9a84ab87f862d",
+        "bundled_coins_repo_commit": "775f46953b0a8c1d8aee6a0b880c69af5e0dce4a",
         "coins_repo_api_url": "https://api.github.com/repos/ZDEEX/coins-ce",
         "coins_repo_content_url": "https://raw.githubusercontent.com/ZDEEX/coins-ce",
         "coins_repo_branch": "master",
